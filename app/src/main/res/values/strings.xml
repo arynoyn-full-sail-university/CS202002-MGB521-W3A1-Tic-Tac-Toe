@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TicTacToe_ChristopherWest</string>
+    <string name="game_title">Tic-Tac-Toe</string>
+    <string name="game_subtitle">The Game</string>
+    <string name="game_option_pvp">Player vs Player</string>
+    <string name="game_option_pvc">Player vs Computer</string>
+    <string name="game_option_cvc">Computer vs Computer</string>
+    <string name="game_option_difficulty_hard">Difficulty: Hard</string>
+    <string name="game_option_difficulty_easy">Difficulty: Easy</string>
+    <string name="game_option_credits">Credits</string>
+</resources>

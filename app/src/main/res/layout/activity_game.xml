@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutGameActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#202020"
+    tools:context=".activities.GameActivity">
+
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/top_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/center_left"
+        app:layout_constraintEnd_toStartOf="@+id/top_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/top_center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/center_center"
+        app:layout_constraintEnd_toStartOf="@+id/top_right"
+        app:layout_constraintStart_toEndOf="@+id/top_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/top_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/center_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/top_center"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/center_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_left"
+        app:layout_constraintEnd_toStartOf="@+id/center_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_left" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/center_center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_center"
+        app:layout_constraintEnd_toStartOf="@+id/center_right"
+        app:layout_constraintStart_toEndOf="@+id/center_left"
+        app:layout_constraintTop_toBottomOf="@+id/top_center" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/center_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/center_center"
+        app:layout_constraintTop_toBottomOf="@+id/top_right" />
+
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/bottom_left"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bottom_center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/center_left" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/bottom_center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bottom_right"
+        app:layout_constraintStart_toEndOf="@+id/bottom_left"
+        app:layout_constraintTop_toBottomOf="@+id/center_center" />
+
+    <edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView
+        android:id="@+id/bottom_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_center"
+        app:layout_constraintTop_toBottomOf="@+id/center_right" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

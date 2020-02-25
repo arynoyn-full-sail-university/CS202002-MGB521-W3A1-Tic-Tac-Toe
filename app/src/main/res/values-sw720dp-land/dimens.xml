@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="menu_title">64sp</dimen>
+    <dimen name="menu_subtitle">32sp</dimen>
+    <dimen name="menu_option">40sp</dimen>
+</resources>

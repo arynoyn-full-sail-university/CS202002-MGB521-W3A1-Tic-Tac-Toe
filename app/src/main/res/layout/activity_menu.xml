@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".activities.MenuActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.75"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/menu_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_title"
+            android:textSize="@dimen/menu_title"
+            android:textStyle="bold"
+            android:layout_marginTop="100dp"/>
+
+        <TextView
+            android:id="@+id/menu_subtitle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_subtitle"
+            android:textSize="@dimen/menu_subtitle"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.75"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/menu_option_PVP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_pvp"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+
+        <TextView
+            android:id="@+id/menu_option_PVC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_pvc"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+        <TextView
+            android:id="@+id/menu_option_CVC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_cvc"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+        <TextView
+            android:id="@+id/menu_option_difficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_difficulty_hard"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+        <TextView
+            android:id="@+id/menu_option_credits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_credits"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+    </LinearLayout>
+
+</LinearLayout>
