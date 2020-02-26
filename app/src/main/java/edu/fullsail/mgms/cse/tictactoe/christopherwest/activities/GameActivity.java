@@ -21,6 +21,14 @@ import edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView;
 
 public class GameActivity extends AppCompatActivity {
 
+    public byte getXValue() {
+        return X;
+    }
+
+    public byte getOValue() {
+        return O;
+    }
+
     private final byte X = (byte)'x';
     private final byte O = (byte)'o';
     private final long DELAY = 300;
