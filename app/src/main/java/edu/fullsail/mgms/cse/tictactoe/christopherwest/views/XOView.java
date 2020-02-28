@@ -1,6 +1,8 @@
 package edu.fullsail.mgms.cse.tictactoe.christopherwest.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +13,7 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import edu.fullsail.mgms.cse.tictactoe.christopherwest.R;
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.activities.GameActivity;
 
 public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
@@ -22,6 +25,8 @@ public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.
     private Paint mPaintFill;
     private Rect mFieldDimensions;
     private int mLocation;
+    private Bitmap mBMPPlayerX;
+    private Bitmap mBMPPlayerO;
 
     public XOView(Context context) {
         super(context);
@@ -57,15 +62,18 @@ public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.
         mPaintX = new Paint();
         mPaintX.setStyle(Paint.Style.FILL);
         mPaintX.setColor(Color.BLUE);
+
+        mBMPPlayerX = BitmapFactory.decodeResource(context.getResources(), R.drawable.tictactoe_x);
+        mBMPPlayerO = BitmapFactory.decodeResource(context.getResources(), R.drawable.tictactoe_o);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawRect(mFieldDimensions, mPaintFill);
         if (mValue == mGame.getOValue()) {
-            canvas.drawCircle(mFieldDimensions.width() / 2, mFieldDimensions.height() / 2, Math.min(mFieldDimensions.width(), mFieldDimensions.height()) / 2 - 10 * 2, mPaintO);
+            canvas.drawBitmap(mBMPPlayerO, null, mFieldDimensions, null);
         } else if (mValue == mGame.getXValue()) {
-            canvas.drawCircle(mFieldDimensions.width() / 2, mFieldDimensions.height() / 2, Math.min(mFieldDimensions.width(), mFieldDimensions.height()) / 2 - 10 * 2, mPaintX);
+            canvas.drawBitmap(mBMPPlayerX, null, mFieldDimensions, null);
         }
         super.onDraw(canvas);
 
