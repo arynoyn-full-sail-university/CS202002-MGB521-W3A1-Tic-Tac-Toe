@@ -3,13 +3,15 @@ package edu.fullsail.mgms.cse.tictactoe.christopherwest.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Vector;
 
@@ -20,6 +22,9 @@ import edu.fullsail.mgms.cse.tictactoe.christopherwest.enums.Winner;
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.views.XOView;
 
 public class GameActivity extends AppCompatActivity {
+
+    private HashSet<ArrayList<Integer>> mWinConditions3x3;
+    private HashSet<ArrayList<Integer>> mWinConditions4x4;
 
     public byte getXValue() {
         return X;
@@ -101,7 +106,39 @@ public class GameActivity extends AppCompatActivity {
         mMode = GameMode.values()[b.getInt("mode")];
         mDiff = GameDiff.values()[b.getInt("diff")];
 
+        Initialize3x3WinConditions();
+        Initialize4x4WinConditions();
+
+
         findXOViews((ViewGroup)getWindow().getDecorView().getRootView(), mXOViews);
+    }
+
+    private void Initialize4x4WinConditions() {
+        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+        list.add(new ArrayList<>(Arrays.asList(1, 2, 3, 4)));
+        list.add(new ArrayList<>(Arrays.asList(5, 6, 7, 8)));
+        list.add(new ArrayList<>(Arrays.asList(9, 10, 11, 12)));
+        list.add(new ArrayList<>(Arrays.asList(13, 14, 15, 16)));
+        list.add(new ArrayList<>(Arrays.asList(1, 5, 9, 13)));
+        list.add(new ArrayList<>(Arrays.asList(2, 6, 10, 14)));
+        list.add(new ArrayList<>(Arrays.asList(3, 7, 11, 15)));
+        list.add(new ArrayList<>(Arrays.asList(4, 8, 12, 16)));
+        list.add(new ArrayList<>(Arrays.asList(1, 6, 11, 16)));
+        list.add(new ArrayList<>(Arrays.asList(4, 7, 10, 13)));
+        mWinConditions4x4 = new HashSet<>(list);
+    }
+
+    private void Initialize3x3WinConditions() {
+        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
+        list.add(new ArrayList<>(Arrays.asList(1, 2, 3)));
+        list.add(new ArrayList<>(Arrays.asList(4, 5, 6)));
+        list.add(new ArrayList<>(Arrays.asList(7, 8, 9)));
+        list.add(new ArrayList<>(Arrays.asList(1, 4, 7)));
+        list.add(new ArrayList<>(Arrays.asList(2, 5, 8)));
+        list.add(new ArrayList<>(Arrays.asList(3, 6, 9)));
+        list.add(new ArrayList<>(Arrays.asList(1, 5, 9)));
+        list.add(new ArrayList<>(Arrays.asList(3, 5, 7)));
+        mWinConditions3x3 = new HashSet<>(list);
     }
 
     private void findXOViews(ViewGroup parent, Vector<XOView> list) {
@@ -144,6 +181,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private Winner checkWin(boolean mIsPlayerX, byte[] mGameBoard) {
+
         return Winner.TBD;
     }
 
