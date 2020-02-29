@@ -71,6 +71,16 @@ tools:context=".activities.MenuActivity">
             android:onClick="onClick"
             android:clickable="true"/>
         <TextView
+            android:id="@+id/menu_option_board_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/game_option_3x3"
+            android:textSize="@dimen/menu_option"
+            android:textStyle="bold"
+            android:onClick="onClick"
+            android:clickable="true"/>
+        <TextView
             android:id="@+id/menu_option_difficulty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

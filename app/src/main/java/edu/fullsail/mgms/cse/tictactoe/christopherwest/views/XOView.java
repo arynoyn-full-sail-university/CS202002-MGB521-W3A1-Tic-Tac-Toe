@@ -103,22 +103,27 @@ public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        mValue = mGame.ismIsPlayerX() ? mGame.getXValue() : mGame.getOValue();
+        mValue = mGame.getCurrentPlayer().getPlayerToken();
         mLocation = mGame.getmXOViews().indexOf(v);
-        if(mGame.getmGameBoard()[mLocation] != mGame.getXValue()
-                && mGame.getmGameBoard()[mLocation] != mGame.getOValue()) {
+        if(mGame.getmGameBoard()[mLocation] == mGame.getEmptySpaceValue()) {
+            mGame.getCurrentPlayer().move(mGame.getmGameBoard(), mLocation);
             Canvas c = mHolder.lockCanvas();
-            select();
             onDraw(c);
             mHolder.unlockCanvasAndPost(c);
-            mGame.endTurn(mLocation, mValue);
+            mGame.endTurn(mLocation);
         }
         return super.onTouchEvent(event);
     }
 
     public void select() {
+        mValue = mGame.getCurrentPlayer().getPlayerToken();
+        mLocation = mGame.getmXOViews().indexOf(this);
         byte[] newBoard = mGame.getmGameBoard();
         newBoard[mLocation] = mValue;
         mGame.setmGameBoard(newBoard);
+        Canvas c = mHolder.lockCanvas();
+        onDraw(c);
+        mHolder.unlockCanvasAndPost(c);
+        mGame.endTurn(mLocation);
     }
 }

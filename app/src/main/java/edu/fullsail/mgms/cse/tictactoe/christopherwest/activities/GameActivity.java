@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.R;
+import edu.fullsail.mgms.cse.tictactoe.christopherwest.classes.PlayerStats;
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.enums.GameDiff;
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.enums.GameMode;
 import edu.fullsail.mgms.cse.tictactoe.christopherwest.enums.Winner;
@@ -25,41 +26,24 @@ public class GameActivity extends AppCompatActivity {
 
     private HashSet<ArrayList<Integer>> mWinConditions3x3;
     private HashSet<ArrayList<Integer>> mWinConditions4x4;
-
-    public byte getXValue() {
-        return X;
-    }
-
-    public byte getOValue() {
-        return O;
-    }
-
+    private int mBoardSize = 3;
+    private int mNumberOfMoves = 0;
     private final byte X = (byte)'x';
     private final byte O = (byte)'o';
     private final long DELAY = 300;
-
     private GameMode mMode;
     private GameDiff mDiff;
     private byte[] mGameBoard;
-    private boolean mIsPlayerX;
     private Vector<XOView> mXOViews;
     private TextView mPlayerTurnLbl;
+    private ArrayList<PlayerStats> mPlayerStats;
+    private PlayerStats mCurrentPlayer;
 
-    public GameMode getmMode() {
-        return mMode;
+    public byte getXValue() {return X;}
+    public byte getOValue() {
+        return O;
     }
-
-    public void setmMode(GameMode mMode) {
-        this.mMode = mMode;
-    }
-
-    public GameDiff getmDiff() {
-        return mDiff;
-    }
-
-    public void setmDiff(GameDiff mDiff) {
-        this.mDiff = mDiff;
-    }
+    public byte getEmptySpaceValue() {return 0;}
 
     public byte[] getmGameBoard() {
         return mGameBoard;
@@ -69,20 +53,12 @@ public class GameActivity extends AppCompatActivity {
         this.mGameBoard = mGameBoard;
     }
 
-    public boolean ismIsPlayerX() {
-        return mIsPlayerX;
-    }
-
-    public void setmIsPlayerX(boolean mIsPlayerX) {
-        this.mIsPlayerX = mIsPlayerX;
+    public boolean isPlayerX() {
+        return getCurrentPlayer().getPlayerToken() == getXValue();
     }
 
     public Vector<XOView> getmXOViews() {
         return mXOViews;
-    }
-
-    public void setmXOViews(Vector<XOView> mXOViews) {
-        this.mXOViews = mXOViews;
     }
 
     public TextView getmPlayerTurnLbl() {
@@ -98,22 +74,32 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         mXOViews = new Vector<>();
-        mGameBoard = new byte[9];
-        mIsPlayerX = true;
+
 
         //read startup params
         Bundle b = getIntent().getExtras();
         mMode = GameMode.values()[b.getInt("mode")];
         mDiff = GameDiff.values()[b.getInt("diff")];
+        mBoardSize = b.getInt("board_size");
 
-        Initialize3x3WinConditions();
-        Initialize4x4WinConditions();
-
-
+        mGameBoard = new byte[mBoardSize*mBoardSize];
+        Arrays.fill(mGameBoard, getEmptySpaceValue());
+        mPlayerStats = new ArrayList<>(Arrays.asList(new PlayerStats(mBoardSize, getXValue()),
+                                                     new PlayerStats(mBoardSize, getOValue())));
+        mCurrentPlayer = mPlayerStats.get(0);
         findXOViews((ViewGroup)getWindow().getDecorView().getRootView(), mXOViews);
+        /*Initialize3x3WinConditions();
+        Initialize4x4WinConditions();*/
+
+
+
     }
 
-    private void Initialize4x4WinConditions() {
+    private PlayerStats getNextPlayer() {
+        return mPlayerStats.get(mPlayerStats.indexOf(mCurrentPlayer) == 0 ? 1 : 0);
+    }
+
+    /*private void Initialize4x4WinConditions() {
         ArrayList<ArrayList<Integer>> list = new ArrayList<>();
         list.add(new ArrayList<>(Arrays.asList(1, 2, 3, 4)));
         list.add(new ArrayList<>(Arrays.asList(5, 6, 7, 8)));
@@ -139,7 +125,7 @@ public class GameActivity extends AppCompatActivity {
         list.add(new ArrayList<>(Arrays.asList(1, 5, 9)));
         list.add(new ArrayList<>(Arrays.asList(3, 5, 7)));
         mWinConditions3x3 = new HashSet<>(list);
-    }
+    }*/
 
     private void findXOViews(ViewGroup parent, Vector<XOView> list) {
         View child = null;
@@ -154,14 +140,17 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    public void endTurn(int loc, byte val) {
-        mGameBoard[loc] = val;
-        Winner win = checkWin(mIsPlayerX, mGameBoard);
+    public void endTurn(int boardIndex) {
+        mCurrentPlayer = getCurrentPlayer();
+        this.mNumberOfMoves++;
+        Winner win = checkWin(getCurrentPlayer(), boardIndex);
         if (win != Winner.TBD) {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception ex) {}
-
+            if (mMode != GameMode.PVP) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception ex) {
+                }
+            }
             Intent i = new Intent(this, OverActivity.class);
             i.putExtra("winner", win.ordinal());
             startActivity(i);
@@ -169,25 +158,40 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
 
-        mIsPlayerX = !mIsPlayerX;
+        mCurrentPlayer = getNextPlayer();
 
         setTurnLabel();
         // mPlayerTurnLbl.postInvalidate();
 
         // next move is computer turn
-        if (mMode == GameMode.CVC || (mMode == GameMode.PVC && !mIsPlayerX)){
+        if (mMode == GameMode.CVC || (mMode == GameMode.PVC && !isPlayerX())){
             new ComputerTurn().execute();
         }
     }
 
-    private Winner checkWin(boolean mIsPlayerX, byte[] mGameBoard) {
+    public PlayerStats getCurrentPlayer() {
+        return mCurrentPlayer;
+    }
 
-        return Winner.TBD;
+    private Winner checkWin(PlayerStats currentPlayer, int boardIndex) {
+        Winner returnWinner = currentPlayer.hasPlayerWon(boardIndex)
+                ? currentPlayer.getPlayerToken() == getXValue()
+                    ? Winner.X
+                    : Winner.O
+                : Winner.TBD;
+
+        if (mNumberOfMoves == (mBoardSize * mBoardSize)) {
+            returnWinner = Winner.DRAW;
+        }
+
+        return returnWinner;
     }
 
     private void setTurnLabel() {
         // mPlayerTurnLbl.setText(mIsPlayerX ? "Player X" : "Player O");
     }
+
+
 
     private class Move {
         public int score;
@@ -207,18 +211,18 @@ public class GameActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             switch (mDiff) {
                 case EASY:
-                    int location;
+                    int boardIndex;
                     while(true) {
-                        location = (new Random()).nextInt(9);
-                        if (mGameBoard[location] == 0) {
+                        boardIndex = (new Random()).nextInt(9);
+                        if (mGameBoard[boardIndex] == 0) {
                             mBestMove = new Move();
-                            mBestMove.location = location;
+                            mBestMove.location = boardIndex;
                             break;
                         }
                     }
                     break;
                 case HARD:
-                    mBestMove = minimax(mIsPlayerX, mGameBoard);
+                    mBestMove = minimax(isPlayerX(), mGameBoard);
                     break;
                 default: break;
             }
@@ -240,6 +244,9 @@ public class GameActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void unused) {
+            byte[] newBoard = getmGameBoard();
+            newBoard[mBestMove.location] = getCurrentPlayer().getPlayerToken();
+            setmGameBoard(newBoard);
             mXOViews.get(mBestMove.location).select();
         }
     }
