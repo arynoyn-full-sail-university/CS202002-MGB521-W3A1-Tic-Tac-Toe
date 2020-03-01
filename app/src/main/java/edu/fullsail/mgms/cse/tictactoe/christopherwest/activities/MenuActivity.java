@@ -35,10 +35,38 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 passToGameActivity(GameMode.PVP);
                 break;
             case R.id.menu_option_PVC:
-                passToGameActivity(GameMode.PVC);
+                if (mBoardSize > 3 && mDifficulty != GameDiff.EASY)
+                {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setTitle("Difficulty Mode not Available for Board Size");
+                    dialog.setMessage("Player vs Computer Mode is only available on Easy mode for boards larger than 3x3 due to the exponential time complexity");
+                    dialog.setPositiveButton(" OK ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    passToGameActivity(GameMode.PVC);
+                }
                 break;
             case R.id.menu_option_CVC:
-                passToGameActivity(GameMode.CVC);
+                if (mBoardSize > 3 && mDifficulty != GameDiff.EASY)
+                {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setTitle("Difficulty Mode not Available for Board Size");
+                    dialog.setMessage("Computer vs Computer Mode is only available on Easy mode for boards larger than 3x3 due to the exponential time complexity");
+                    dialog.setPositiveButton(" OK ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    passToGameActivity(GameMode.CVC);
+                }
                 break;
             case R.id.menu_option_difficulty:
                 mDifficulty = mDifficulty == GameDiff.EASY ? GameDiff.HARD : GameDiff.EASY;

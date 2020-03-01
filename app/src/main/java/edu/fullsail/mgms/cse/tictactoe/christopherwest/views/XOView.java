@@ -86,6 +86,8 @@ public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.
         if (c != null) {
             mFieldDimensions.set(0,0, c.getWidth(), c.getHeight());
         }
+        mLocation = mGame.getmXOViews().indexOf(this);
+        mValue = mGame.getmGameBoard()[mLocation];
         onDraw(c);
         mHolder.unlockCanvasAndPost(c);
     }
@@ -118,12 +120,12 @@ public class XOView extends SurfaceView implements SurfaceHolder.Callback, View.
     public void select() {
         mValue = mGame.getCurrentPlayer().getPlayerToken();
         mLocation = mGame.getmXOViews().indexOf(this);
-        byte[] newBoard = mGame.getmGameBoard();
-        newBoard[mLocation] = mValue;
-        mGame.setmGameBoard(newBoard);
-        Canvas c = mHolder.lockCanvas();
-        onDraw(c);
-        mHolder.unlockCanvasAndPost(c);
-        mGame.endTurn(mLocation);
+        if(mGame.getmGameBoard()[mLocation] == mGame.getEmptySpaceValue()) {
+            mGame.getCurrentPlayer().move(mGame.getmGameBoard(), mLocation);
+            Canvas c = mHolder.lockCanvas();
+            onDraw(c);
+            mHolder.unlockCanvasAndPost(c);
+            mGame.endTurn(mLocation);
+        }
     }
 }

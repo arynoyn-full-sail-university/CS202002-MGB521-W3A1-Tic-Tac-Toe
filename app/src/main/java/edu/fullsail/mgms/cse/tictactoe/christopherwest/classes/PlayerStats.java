@@ -19,6 +19,7 @@ public class PlayerStats {
     private void incrementRowCount(int row) {
         this.row_count[row]++;
     }
+    private void decrementRowCount(int row) { this.row_count[row]--; }
 
     public int[] getColumnCount() {
         return column_count;
@@ -27,6 +28,7 @@ public class PlayerStats {
     private void incrementColumnCount(int column) {
         this.column_count[column]++;
     }
+    private void decrementColumnCount(int column) { this.column_count[column]--; }
 
     public int getDiagonalCount() {
         return diagonal_count;
@@ -35,6 +37,7 @@ public class PlayerStats {
     private void incrementDiagonalCount() {
         this.diagonal_count++;
     }
+    private void decrementDiagonalCount() { this.diagonal_count--; }
 
     public int getDiagonalInverseCount() {
         return diagonal_inverse_count;
@@ -43,6 +46,7 @@ public class PlayerStats {
     private void incrementDiagonalInverseCount() {
         this.diagonal_inverse_count++;
     }
+    private void decrementDiagonalInverseCount() {this.diagonal_inverse_count--; }
 
     public boolean hasPlayerWon(int boardIndex) {
         int row = getRow(boardIndex);
@@ -65,6 +69,21 @@ public class PlayerStats {
         }
         if((row + 1) + col == this.board_size){
             this.incrementDiagonalInverseCount();
+        }
+    }
+
+    public void unmove(byte[] board, int boardIndex, Byte emptyValue) {
+        board[boardIndex] = emptyValue;
+        int row = getRow(boardIndex);
+        int col = getColumn(boardIndex);
+
+        this.decrementColumnCount(col);
+        this.decrementRowCount(row);
+        if(row == col) {
+            this.decrementDiagonalCount();
+        }
+        if((row + 1) + col == this.board_size){
+            this.decrementDiagonalInverseCount();
         }
     }
 

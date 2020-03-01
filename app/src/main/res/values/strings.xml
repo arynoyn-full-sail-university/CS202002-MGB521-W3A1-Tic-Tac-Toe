@@ -9,7 +9,7 @@
     <string name="game_option_difficulty_easy">Difficulty: Easy</string>
     <string name="game_option_credits">Credits</string>
     <string name="game_option_3x3">Board Size: 3x3</string>
-    <string name="game_option_4x4">Board SIze: 4x4</string>
+    <string name="game_option_4x4">Board Size: 4x4</string>
     <string name="game_winner_player_x">Player X Wins!</string>
     <string name="game_winner_player_o">Player O Wins!</string>
     <string name="game_winner_player_draw">Draw Game!</string>

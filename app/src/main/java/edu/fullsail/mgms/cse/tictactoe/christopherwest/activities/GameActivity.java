@@ -3,15 +3,20 @@ package edu.fullsail.mgms.cse.tictactoe.christopherwest.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -44,38 +49,22 @@ public class GameActivity extends AppCompatActivity {
         return O;
     }
     public byte getEmptySpaceValue() {return 0;}
-
     public byte[] getmGameBoard() {
         return mGameBoard;
     }
-
-    public void setmGameBoard(byte[] mGameBoard) {
-        this.mGameBoard = mGameBoard;
-    }
-
     public boolean isPlayerX() {
         return getCurrentPlayer().getPlayerToken() == getXValue();
     }
-
     public Vector<XOView> getmXOViews() {
         return mXOViews;
     }
-
-    public TextView getmPlayerTurnLbl() {
-        return mPlayerTurnLbl;
-    }
-
-    public void setmPlayerTurnLbl(TextView mPlayerTurnLbl) {
-        this.mPlayerTurnLbl = mPlayerTurnLbl;
-    }
+    public int viewReadyCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         mXOViews = new Vector<>();
-
-
         //read startup params
         Bundle b = getIntent().getExtras();
         mMode = GameMode.values()[b.getInt("mode")];
@@ -86,46 +75,54 @@ public class GameActivity extends AppCompatActivity {
         Arrays.fill(mGameBoard, getEmptySpaceValue());
         mPlayerStats = new ArrayList<>(Arrays.asList(new PlayerStats(mBoardSize, getXValue()),
                                                      new PlayerStats(mBoardSize, getOValue())));
+
+        InitializeGameLayout();
         mCurrentPlayer = mPlayerStats.get(0);
+        setTurnLabel();
         findXOViews((ViewGroup)getWindow().getDecorView().getRootView(), mXOViews);
-        /*Initialize3x3WinConditions();
-        Initialize4x4WinConditions();*/
+        if (mMode == GameMode.CVC) {
+            new ComputerTurn().execute();
+        }
+    }
 
+    private void InitializeGameLayout() {
+        LinearLayout layout = findViewById(R.id.layoutGameActivity);
+        layout.removeAllViews();
+        for (int i = 0; i < mBoardSize; i++) {
+            LinearLayout rowLayout = new LinearLayout(this);
+            rowLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.addView(rowLayout);
+            for (int j = 0; j < mBoardSize; j++) {
+                XOView cell = new XOView(this);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                // code for scaling from dips to pixels found at
+                // https://stackoverflow.com/questions/2238883/what-is-the-correct-way-to-specify-dimensions-in-dip-from-java-code
+                int pixelValue = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+                params.setMargins(pixelValue, pixelValue, pixelValue, pixelValue);
+                cell.setLayoutParams(params);
+                rowLayout.addView(cell);
+            }
+        }
+        mPlayerTurnLbl = new TextView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+        mPlayerTurnLbl.setLayoutParams(params);
+        mPlayerTurnLbl.setText("Player X");
+        mPlayerTurnLbl.setAllCaps(true);
+        mPlayerTurnLbl.setTextColor(Color.WHITE);
+        mPlayerTurnLbl.setTextSize(28);
+        mPlayerTurnLbl.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        mPlayerTurnLbl.setGravity(View.TEXT_ALIGNMENT_CENTER);
 
-
+        layout.addView(mPlayerTurnLbl);
     }
 
     private PlayerStats getNextPlayer() {
-        return mPlayerStats.get(mPlayerStats.indexOf(mCurrentPlayer) == 0 ? 1 : 0);
+        return getNextPlayer(mCurrentPlayer);
     }
-
-    /*private void Initialize4x4WinConditions() {
-        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
-        list.add(new ArrayList<>(Arrays.asList(1, 2, 3, 4)));
-        list.add(new ArrayList<>(Arrays.asList(5, 6, 7, 8)));
-        list.add(new ArrayList<>(Arrays.asList(9, 10, 11, 12)));
-        list.add(new ArrayList<>(Arrays.asList(13, 14, 15, 16)));
-        list.add(new ArrayList<>(Arrays.asList(1, 5, 9, 13)));
-        list.add(new ArrayList<>(Arrays.asList(2, 6, 10, 14)));
-        list.add(new ArrayList<>(Arrays.asList(3, 7, 11, 15)));
-        list.add(new ArrayList<>(Arrays.asList(4, 8, 12, 16)));
-        list.add(new ArrayList<>(Arrays.asList(1, 6, 11, 16)));
-        list.add(new ArrayList<>(Arrays.asList(4, 7, 10, 13)));
-        mWinConditions4x4 = new HashSet<>(list);
+    private PlayerStats getNextPlayer(PlayerStats player) {
+        return mPlayerStats.get(mPlayerStats.indexOf(player) == 0 ? 1 : 0);
     }
-
-    private void Initialize3x3WinConditions() {
-        ArrayList<ArrayList<Integer>> list = new ArrayList<>();
-        list.add(new ArrayList<>(Arrays.asList(1, 2, 3)));
-        list.add(new ArrayList<>(Arrays.asList(4, 5, 6)));
-        list.add(new ArrayList<>(Arrays.asList(7, 8, 9)));
-        list.add(new ArrayList<>(Arrays.asList(1, 4, 7)));
-        list.add(new ArrayList<>(Arrays.asList(2, 5, 8)));
-        list.add(new ArrayList<>(Arrays.asList(3, 6, 9)));
-        list.add(new ArrayList<>(Arrays.asList(1, 5, 9)));
-        list.add(new ArrayList<>(Arrays.asList(3, 5, 7)));
-        mWinConditions3x3 = new HashSet<>(list);
-    }*/
 
     private void findXOViews(ViewGroup parent, Vector<XOView> list) {
         View child = null;
@@ -143,7 +140,7 @@ public class GameActivity extends AppCompatActivity {
     public void endTurn(int boardIndex) {
         mCurrentPlayer = getCurrentPlayer();
         this.mNumberOfMoves++;
-        Winner win = checkWin(getCurrentPlayer(), boardIndex);
+        Winner win = checkWin(mCurrentPlayer, boardIndex);
         if (win != Winner.TBD) {
             if (mMode != GameMode.PVP) {
                 try {
@@ -151,22 +148,26 @@ public class GameActivity extends AppCompatActivity {
                 } catch (Exception ex) {
                 }
             }
-            Intent i = new Intent(this, OverActivity.class);
-            i.putExtra("winner", win.ordinal());
-            startActivity(i);
-            finish();
+            passToGameOverScreen(win);
             return;
         }
 
         mCurrentPlayer = getNextPlayer();
 
         setTurnLabel();
-        // mPlayerTurnLbl.postInvalidate();
+        mPlayerTurnLbl.postInvalidate();
 
         // next move is computer turn
         if (mMode == GameMode.CVC || (mMode == GameMode.PVC && !isPlayerX())){
             new ComputerTurn().execute();
         }
+    }
+
+    private void passToGameOverScreen(Winner win) {
+        Intent i = new Intent(this, OverActivity.class);
+        i.putExtra("winner", win.ordinal());
+        startActivity(i);
+        finish();
     }
 
     public PlayerStats getCurrentPlayer() {
@@ -180,22 +181,103 @@ public class GameActivity extends AppCompatActivity {
                     : Winner.O
                 : Winner.TBD;
 
-        if (mNumberOfMoves == (mBoardSize * mBoardSize)) {
+        if (returnWinner == Winner.TBD && mNumberOfMoves == (mBoardSize * mBoardSize)) {
             returnWinner = Winner.DRAW;
         }
 
         return returnWinner;
     }
 
-    private void setTurnLabel() {
-        // mPlayerTurnLbl.setText(mIsPlayerX ? "Player X" : "Player O");
+    private Winner checkBoardState(byte[] board) {
+        for (int i = 0; i < mBoardSize; i++) {
+            if(board[getBoardIndex(i,0)] == getXValue()
+                && board[getBoardIndex(i,1)] == getXValue()
+                && board[getBoardIndex(i,2)] == getXValue()) {
+                    return Winner.X;
+            }
+            if(board[getBoardIndex(i,0)] == getOValue()
+                    && board[getBoardIndex(i,1)] == getOValue()
+                    && board[getBoardIndex(i,2)] == getOValue()) {
+                return Winner.O;
+            }
+        }
+
+        for (int j = 0; j < mBoardSize; j++) {
+            if(board[getBoardIndex(0,j)] == getXValue()
+                    && board[getBoardIndex(1,j)] == getXValue()
+                    && board[getBoardIndex(2,j)] == getXValue()) {
+                return Winner.X;
+            }
+            if(board[getBoardIndex(0,j)] == getOValue()
+                    && board[getBoardIndex(1,j)] == getOValue()
+                    && board[getBoardIndex(2,j)] == getOValue()) {
+                return Winner.O;
+            }
+        }
+
+        boolean x_diagwin = true;
+        for (int i = 0; i < mBoardSize; i++) {
+            if (board[getBoardIndex(i,i)] != getXValue()) {
+                x_diagwin = false;
+                break;
+            }
+        }
+        if (x_diagwin) { return Winner.X;}
+
+        boolean o_diagwin = true;
+        for (int i = 0; i < mBoardSize; i++) {
+            if (board[getBoardIndex(i, i)] != getOValue()) {
+                o_diagwin = false;
+                break;
+            }
+        }
+        if (o_diagwin) { return Winner.O;}
+
+        x_diagwin = true;
+        for (int i = 0; i < mBoardSize; i++) {
+            if (board[getBoardIndex(i, (mBoardSize - 1) - i)] != getXValue()) {
+                x_diagwin = false;
+                break;
+            }
+        }
+        if (x_diagwin) { return Winner.X;}
+
+        o_diagwin = true;
+        for (int i = 0; i < mBoardSize; i++) {
+            if (board[getBoardIndex(i, (mBoardSize - 1) - i)] != getOValue()) {
+                o_diagwin = false;
+                break;
+            }
+        }
+        if (o_diagwin) { return Winner.O;}
+
+        boolean gameOver = true;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == getEmptySpaceValue()){
+                gameOver = false;
+                break;
+            }
+        }
+
+        return gameOver ? Winner.DRAW : Winner.TBD;
     }
 
+    private void setTurnLabel() {
+        mPlayerTurnLbl.setText(isPlayerX() ? "Player X" : "Player O");
+    }
+    private int getBoardIndex(int row, int column) {
+        return (row * mBoardSize) + (column % mBoardSize);
+    }
 
 
     private class Move {
         public int score;
         public int location;
+
+        public Move(int score, int location) {
+            this.score = score;
+            this.location = location;
+        }
     }
 
     private class ComputerTurn extends AsyncTask<Void, Void, Void> {
@@ -213,16 +295,16 @@ public class GameActivity extends AppCompatActivity {
                 case EASY:
                     int boardIndex;
                     while(true) {
-                        boardIndex = (new Random()).nextInt(9);
+                        boardIndex = (new Random()).nextInt(mBoardSize * mBoardSize);
                         if (mGameBoard[boardIndex] == 0) {
-                            mBestMove = new Move();
-                            mBestMove.location = boardIndex;
+                            mBestMove = new Move(-1, boardIndex);
                             break;
                         }
                     }
                     break;
                 case HARD:
-                    mBestMove = minimax(isPlayerX(), mGameBoard);
+                    boolean isPlayerX = mCurrentPlayer.getPlayerToken() == getXValue();
+                    mBestMove = getBestMove(isPlayerX, mGameBoard);
                     break;
                 default: break;
             }
@@ -238,16 +320,68 @@ public class GameActivity extends AppCompatActivity {
             return null;
         }
 
-        private Move minimax(boolean mIsPlayerX, byte[] mGameBoard) {
-            return null;
+        private Move getBestMove(boolean isPlayerX, byte[] gameBoard) {
+            boolean gameStarted = false;
+            for (int i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] != getEmptySpaceValue()){
+                    gameStarted = true;
+                    break;
+                }
+            }
+
+
+            int bestVal = isPlayerX ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            if(!gameStarted) {
+                return new Move(bestVal, 0);
+            }
+            Move bestMove = new Move(bestVal, -1);
+
+            for (int i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] == getEmptySpaceValue()) {
+                    gameBoard[i] = isPlayerX ? getXValue() : getOValue();
+                    int moveVal = minimax(!isPlayerX, gameBoard, 0);
+                    gameBoard[i] = getEmptySpaceValue();
+                    if ((isPlayerX && moveVal > bestVal) || (!isPlayerX && moveVal < bestVal)) {
+                        bestMove.location = i;
+                        bestVal = moveVal;
+                    }
+                }
+            }
+            bestMove.score = bestVal;
+            return bestMove;
+        }
+
+        private int minimax(boolean isPlayerX, byte[] gameBoard, int depth) {
+            Winner winner = checkBoardState(gameBoard);
+            if (winner != Winner.TBD) {
+                return getScoredMove(winner, depth);
+            }
+
+            int bestScore = isPlayerX ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            for (int i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] != getEmptySpaceValue()) {
+                    continue; //Space is already filled
+                }
+                gameBoard[i] = isPlayerX ? getXValue() : getOValue();
+                int minmax = minimax(!isPlayerX, gameBoard,depth + 1);
+                gameBoard[i] = getEmptySpaceValue();
+                bestScore = isPlayerX ? Math.max(bestScore, minmax ) : Math.min(bestScore, minmax);
+            }
+            return bestScore;
         }
 
         @Override
         protected void onPostExecute(Void unused) {
-            byte[] newBoard = getmGameBoard();
-            newBoard[mBestMove.location] = getCurrentPlayer().getPlayerToken();
-            setmGameBoard(newBoard);
             mXOViews.get(mBestMove.location).select();
+        }
+
+        private int getScoredMove(Winner winner, int depth) {
+            int score = winner == Winner.DRAW ?
+                    0 :
+                    winner == Winner.O
+                            ? -(mBoardSize*mBoardSize) + depth
+                            : (mBoardSize*mBoardSize) - depth;
+            return score;
         }
     }
 }
